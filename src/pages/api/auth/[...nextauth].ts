@@ -5,7 +5,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (req.method === 'POST') {
     try {
       const { username, password } = req.body;
-      const response = await axios.post('http://localhost:3000/auth/login', {
+      const response = await axios.post('http://localhost:3000/api/auth/login', {
         username,
         password,
       });

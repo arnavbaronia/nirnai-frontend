@@ -28,17 +28,20 @@ export default function UploadForm({ onUploadSuccess }: UploadFormProps) {
     try {
       const formData = new FormData();
       formData.append('file', file);
-      formData.append('userId', user.id.toString());
+      formData.append('userId', user.userId.toString());
 
+      const token = localStorage.getItem('token') || '';
+      
       const response = await axios.post('http://localhost:3000/transactions/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': `Bearer ${token}`,
         },
       });
 
       onUploadSuccess(response.data);
-    } catch (err) {
+    } catch (err: any) {
+      console.error('Upload error:', err);
       setError(err.response?.data?.message || 'Upload failed');
     } finally {
       setIsUploading(false);
