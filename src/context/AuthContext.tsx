@@ -1,7 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
-import Cookies from 'js-cookie';
 
 interface AuthContextType {
   user: any;
@@ -12,7 +11,8 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType>(null!);
 
-const API_URL = 'http://localhost:3000/api/';
+// Fix: Use correct API URL without the /api/ segment
+const API_URL = 'http://localhost:3000';
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<any>(null);
@@ -24,8 +24,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Set axios default header for all requests
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       
-      // Try to fetch user profile
-      axios.get(`${API_URL}/auth/profile`, {
+      // Try to fetch user profile with correct endpoint
+      axios.get(`${API_URL}/api/auth/profile`, {
         headers: {
           Authorization: `Bearer ${token}`,
         }
@@ -43,7 +43,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = async (username: string, password: string) => {
     try {
-      const response = await axios.post(`${API_URL}/auth/login`, {
+      const response = await axios.post(`${API_URL}/api/auth/login`, {
         username,
         password,
       });
@@ -54,7 +54,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Set authorization header for subsequent requests
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       
-      const userResponse = await axios.get(`${API_URL}/auth/profile`, {
+      const userResponse = await axios.get(`${API_URL}/api/auth/profile`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -69,7 +69,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const register = async (username: string, password: string) => {
     try {
-      await axios.post(`${API_URL}/auth/register`, {
+      await axios.post(`${API_URL}/api/auth/register`, {
         username,
         password,
       });

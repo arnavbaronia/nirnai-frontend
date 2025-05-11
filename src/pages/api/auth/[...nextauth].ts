@@ -5,12 +5,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (req.method === 'POST') {
     try {
       const { username, password } = req.body;
+      // Fix: Remove the /api/ segment
       const response = await axios.post('http://localhost:3000/api/auth/login', {
         username,
         password,
       });
       res.status(200).json(response.data);
-    } catch (error) {
+    } catch (error: any) {
       res.status(400).json({ message: error.response?.data?.message || 'Login failed' });
     }
   } else {

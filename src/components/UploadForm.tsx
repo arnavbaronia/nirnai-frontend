@@ -28,9 +28,17 @@ export default function UploadForm({ onUploadSuccess }: UploadFormProps) {
     try {
       const formData = new FormData();
       formData.append('file', file);
-      formData.append('userId', user.userId.toString());
+      // Make sure userId is a number and exists
+      if (user && user.userId) {
+        formData.append('userId', user.userId.toString());
+      } else {
+        throw new Error('User ID not found');
+      }
 
-      const token = localStorage.getItem('token') || '';
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('Authentication token not found');
+      }
       
       const response = await axios.post('http://localhost:3000/transactions/upload', formData, {
         headers: {
@@ -42,7 +50,7 @@ export default function UploadForm({ onUploadSuccess }: UploadFormProps) {
       onUploadSuccess(response.data);
     } catch (err: any) {
       console.error('Upload error:', err);
-      setError(err.response?.data?.message || 'Upload failed');
+      setError(err.response?.data?.message || err.message || 'Upload failed');
     } finally {
       setIsUploading(false);
     }
